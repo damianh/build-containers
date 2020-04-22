@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.200-buster
+
+# Add Microsoft's repository so we can install dotnet core 2.1 sdk
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-package-manager-ubuntu-1804
+RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb
+
+# Install docker client
+RUN curl -fsSL https://get.docker.com | sh
+
+# Install required tools
+RUN apt-get update \
+    && apt-get -y install zip dotnet-sdk-2.1
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN ln -s /usr/local/bin/docker-entrypoint.sh / # backwards compat
+ENTRYPOINT ["docker-entrypoint.sh"]
